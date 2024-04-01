@@ -4,48 +4,75 @@ using UnityEngine;
 
 public class PickUpController : MonoBehaviour
 {
-    //public ProjectileItem ItemScript;
-    public Rigidbody rb;
-    public BoxCollider coll;
-    public Transform player, itemContainer, fpsCam;
+    [Header("Pickup Settings")]
+    [SerializeField] Transform holdArea;
+    private GameObject heldObj;
+    private Rigidbody heldObjRB;
 
-    public float pickUpRange;
-    public float dropForwardForce, dropUpwardForce;
-
-    public bool equipped;
-    public static bool slotFull;
+    [Header("Physics Parameters")]
+    [SerializeField] private float pickupRange = 5.0f;
+    [SerializeField] private float pickupForce = 150.0f;
 
     private void Update()
     {
-        // Check if palyer is in range and "E" is pressed
-        Vector3 distanceToPlayer = player.position - transform.position;
-        if (!equipped && distanceToPlayer.magnitude <= pickUpRange && Input.GetKeyDown(KeyCode.E) && !slotFull) PickUp();
+         if(Input.GetMouseButtonDown(0))
+        {
+            if(heldObj == null)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, pickupRange))
+                {
+                    // PickupObject
+                    PickupObject(hit.transform.gameObject);
+                }
+            }
+            else
+            {
+                //drop object
+                DropObject();
+            }
+        }
+         if(heldObj != null)
+        {
+            // moveobject
+            MoveObject();
+        }
+    }
 
-        if (equipped && Input.GetKeyDown(KeyCode.Q)) Drop();
+    void MoveObject()
+    {
+        if(Vector3.Distance(heldObj.transform.position, holdArea.position) > 0.1f)
+        {
+            Vector3 moveDirection = (holdArea.position - heldObj.transform.position);
+            heldObjRB.AddForce(moveDirection * pickupForce);
+        }
 
     }
 
-    private void PickUp()
+    void PickupObject(GameObject pickObj)
     {
-        equipped = true;
-        slotFull = true;
-        //Make Rigidbody Kinematic and BoxCollider a Trigger
-        rb.isKinematic = true;
-        coll.isTrigger = true;
+        if (pickObj.GetComponent<Rigidbody>())
+        {
+            heldObjRB = pickObj.GetComponent<Rigidbody>();
+            heldObjRB.useGravity
+                = false;
+            heldObjRB.drag = 10;
+            heldObjRB.constraints = RigidbodyConstraints.FreezeRotation;
 
-        // Enable Script
-        //ItemScript.enabled = true;
+            heldObjRB.transform.parent = holdArea;
+            heldObj = pickObj;
+        }
     }
 
-    private void Drop()
+    void DropObject()
     {
-        equipped = false;
-        slotFull = false;
-        //Make Rigidbody not Kinematic and BoxCollider a Trigger
-        rb.isKinematic = false;
-        coll.isTrigger = false;
+            heldObjRB.useGravity
+                = true;
+            heldObjRB.drag = 1;
+            heldObjRB.constraints = RigidbodyConstraints.None;
 
-        // disable Script
-        //ItemScript.enabled = false;
+            heldObjRB.transform.parent = null;
+            heldObj = null;
+        
     }
 }
