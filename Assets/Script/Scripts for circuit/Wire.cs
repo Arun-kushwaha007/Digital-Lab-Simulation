@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 /// <summary>
-/// Wires are generated using the ‘w’ key on the keyboard, 
+/// Wires are generated using the ï¿½wï¿½ key on the keyboard, 
 /// or can be accessed via the dropdown menu. After initializing 
 /// them, a click on a Logic Node is listened for on a callback, 
-/// after the first click, the Wire ‘Line’ is rendered to follow 
+/// after the first click, the Wire ï¿½Lineï¿½ is rendered to follow 
 /// the mouse from the specified Logic Node. Every click after 
 /// ward creates an inflection point for the wire, if the clicked 
-/// point is not a Logic Node, in which another ‘Line’ is rendered
+/// point is not a Logic Node, in which another ï¿½Lineï¿½ is rendered
 /// from that point to the mouse. Only when a Logic Node is clicked 
-/// is the wire sequence is done executing within the Wire object’s 
+/// is the wire sequence is done executing within the Wire objectï¿½s 
 /// Update function, and two new Logic Nodes are created at each
 /// end of the wire. The wire follows a similar priority system
 /// to that of the Protoboard by analyzing the colliding Logic Nodes
@@ -336,4 +336,40 @@ public class Wire : MonoBehaviour, LogicInterface
             endCollisionLogic.RequestStateChange(priorityState);
         }
     }
+
+    ////######
+    ///
+    // Method to insert a component into the breadboard
+void InsertComponent(GameObject component)
+{
+    // Place the component at a specific position on the breadboard
+    component.transform.position = new Vector3(0, 0, 0); // Example position
+
+    // Rotate the component if necessary
+    component.transform.rotation = Quaternion.identity; // Example rotation
+}
+
+// Method to connect a wire to the breadboard's power rails
+void ConnectWire(GameObject wire)
+{
+    // Determine which power rail the wire should connect to based on its position
+    Vector3 wirePosition = wire.transform.position;
+
+    // Calculate the distance to the positive and negative power rails
+    float distanceToPositiveRail = Vector3.Distance(wirePosition, positiveRail.transform.position);
+    float distanceToNegativeRail = Vector3.Distance(wirePosition, negativeRail.transform.position);
+
+    // Connect the wire to the closest power rail
+    if (distanceToPositiveRail < distanceToNegativeRail)
+    {
+        // Connect to positive rail
+        Debug.Log("Connected wire to positive rail.");
+    }
+    else
+    {
+        // Connect to negative rail
+        Debug.Log("Connected wire to negative rail.");
+    }
+}
+
 }
