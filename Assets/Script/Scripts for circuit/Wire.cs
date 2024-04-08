@@ -350,26 +350,4 @@ void InsertComponent(GameObject component)
 }
 
 // Method to connect a wire to the breadboard's power rails
-void ConnectWire(GameObject wire)
-{
-    // Determine which power rail the wire should connect to based on its position
-    Vector3 wirePosition = wire.transform.position;
 
-    // Calculate the distance to the positive and negative power rails
-    float distanceToPositiveRail = Vector3.Distance(wirePosition, positiveRail.transform.position);
-    float distanceToNegativeRail = Vector3.Distance(wirePosition, negativeRail.transform.position);
-
-    // Connect the wire to the closest power rail
-    if (distanceToPositiveRail < distanceToNegativeRail)
-    {
-        // Connect to positive rail
-        Debug.Log("Connected wire to positive rail.");
-    }
-    else
-    {
-        // Connect to negative rail
-        Debug.Log("Connected wire to negative rail.");
-    }
-}
-
-}
